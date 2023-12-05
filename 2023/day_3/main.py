@@ -14,45 +14,47 @@ examples: List[Puzzle] = puzzle.examples
 """
 
 
-def solve_puzzle(input_str: str):
-    lines = input_str.split("\n")
-    G = [[c for c in line] for line in lines]
-    R = len(G)
-    C = len(G[0])
+def engine_schematic(input_str: str):
+    lines: list[str] = input_str.split("\n")
+    grid: list[list[str]] = [[c for c in line] for line in lines]
+    rows: int = len(grid)
+    columns: int = len(grid[0])
 
-    p1 = 0
-    nums = defaultdict(list)
-    for r in range(len(G)):
+    total_engine_parts = 0
+    part_numbers: defaultdict = defaultdict(list)
+
+    for row in range(rows):
         gears = set()  # positions of '*' characters next to the current number
         n = 0
         has_part = False
-        for c in range(len(G[r]) + 1):
-            if c < C and G[r][c].isdigit():
-                n = n * 10 + int(G[r][c])
+        for col in range(len(grid[row]) + 1):
+            if col < columns and grid[row][col].isdigit():
+                # this quick hack allows me not to have to chain numbers together.
+                # Each time I encounter a number in the same row, the previous number shifts
+                # one decimal place over
+                n = n * 10 + int(grid[row][col])
                 for rr in [-1, 0, 1]:
                     for cc in [-1, 0, 1]:
-                        if 0 <= r + rr < R and 0 <= c + cc < C:
-                            ch = G[r + rr][c + cc]
-                            if not ch.isdigit() and ch != ".":
+                        if 0 <= row + rr < rows and 0 <= col + cc < columns:
+                            char = grid[row + rr][col + cc]
+                            if not char.isdigit() and char != ".":
                                 has_part = True
-                            if ch == "*":
-                                gears.add((r + rr, c + cc))
+                            if char == "*":
+                                gears.add((row + rr, col + cc))
             elif n > 0:
                 for gear in gears:
-                    nums[gear].append(n)
+                    part_numbers[gear].append(n)
                 if has_part:
-                    p1 += n
+                    total_engine_parts += n
                 n = 0
                 has_part = False
                 gears = set()
 
-    # print(p1)
-    p2 = 0
-    for k, v in nums.items():
+    total_gear_ratios = 0
+    for k, v in part_numbers.items():
         if len(v) == 2:
-            p2 += v[0] * v[1]
-    # print(p2)
-    return p1, p2
+            total_gear_ratios += v[0] * v[1]
+    return total_engine_parts, total_gear_ratios
 
 
 """
@@ -60,11 +62,11 @@ def solve_puzzle(input_str: str):
 """
 for example in examples:
     print(example.input_data)
-    print(example.answer_a)
-    print(example.answer_b)
+    print(example.answer_a, engine_schematic(example.input_data)[0])
+    print(example.answer_b, engine_schematic(example.input_data)[1])
     print()
-
-solutions = solve_puzzle(puzzle.input_data)
+#
+solutions = engine_schematic(puzzle.input_data)
 """
     Submission A
 """
