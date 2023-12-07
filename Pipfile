@@ -1,0 +1,16 @@
+[[source]]
+url = 'https://pypi.python.org/simple'
+verify_ssl = true
+name = 'pypi'
+
+[requires]
+python_version = '3.12'
+
+[packages]
+advent-of-code-data= ">=2.0.1"
+browser-cookie3 = ">=0.19.1"
+numpy = ">=1.26.1"
+
+[dev-packages]
+black = ">=23.11.0"
+isort = "*"
